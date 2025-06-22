@@ -25,6 +25,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+import os
+import requests
+
+def download_model():
+    url = "YOUR_DIRECT_MODEL_LINK"  # Replace with your direct link
+    model_path = "model_003200.h5"
+    if not os.path.exists(model_path):
+        print("Downloading model...")
+        response = requests.get(url)
+        with open(model_path, "wb") as f:
+            f.write(response.content)
+        print("Model downloaded.")
+
+download_model()
 
 model = load_model("model_003200.h5")
 
