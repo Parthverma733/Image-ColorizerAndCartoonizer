@@ -29,7 +29,7 @@ import os
 import requests
 
 def download_model():
-    url = "YOUR_DIRECT_MODEL_LINK"  # Replace with your direct link
+    url = "https://drive.google.com/uc?export=download&id=1fCFjdOY4LqQyoSVgu5p2tGrjm3lenRK4"  
     model_path = "model_003200.h5"
     if not os.path.exists(model_path):
         print("Downloading model...")
