@@ -1,54 +1,55 @@
 # 🎨 Image Colorizer & Cartoonizer
 
-This is a web application built with **FastAPI** and **React.js** that allows users to:
-
-- 🖼️ Convert grayscale images to colored versions using a trained deep learning model  
-- 🧑‍🎨 Transform regular images into cartoon-style images using OpenCV techniques
+A web application built with **FastAPI** and **React.js** that allows users to:
+- 🖼️ Convert grayscale images to colored versions using a trained deep learning model
+- � Transform regular images into cartoon-style images using OpenCV techniques
 
 ---
 
 ## 🔧 Setup Instructions
 
 ### 📥 1. Clone the Repository
-
+```bash
 git clone https://github.com/your-username/image-colorizer-cartoonizer.git
 cd image-colorizer-cartoonizer
----
 
-###📦 2. Download the Pretrained Model
+📦 2. Download the Pretrained Model
+
 Download the trained model file from the link below and place it inside the backend/ directory:
-
 🔗 Download model_003200.h5
 
+Directory structure after download:
 
 project-root/
 └── backend/
     └── model_003200.h5
-###🖥 3. Start the Backend (FastAPI)
+
+🖥 3. Start the Backend (FastAPI)
 
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
-📌 Backend runs on: http://localhost:8000
+📌 Backend runs at: http://localhost:8000
 
-###🌐 4. Start the Frontend (React)
+🌐 4. Start the Frontend (React)
 
 cd frontend
 npm install
 npm start
-📌 Frontend runs on: http://localhost:3000
+📌 Frontend runs at: http://localhost:3000
 
-###📷 Sample Test Images
-Use images from the images/ folder for testing both features.
-The colorizer model works best with grayscale landscape images.
+📷 Sample Test Images
+Use images from the images/ folder for testing both features
 
-###🛠️ Technologies Used
+The colorizer model works best with grayscale landscape images
+
+🛠️ Technologies Used
 Backend
 Python
 
 FastAPI
 
-TensorFlow / Keras
+TensorFlow/Keras
 
 OpenCV
 
@@ -59,7 +60,7 @@ Axios
 
 Framer Motion
 
-###🚀 Features
+🚀 Features
 Smooth React UI for image upload and preview
 
 Real-time cartoonization using OpenCV
