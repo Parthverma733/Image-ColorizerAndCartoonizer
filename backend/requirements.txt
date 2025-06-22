@@ -1,7 +1,8 @@
 fastapi
 uvicorn
+pydantic
 numpy
 opencv-python-headless
 tensorflow
-pydantic
+requests
 python-multipart
