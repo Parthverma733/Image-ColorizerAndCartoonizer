@@ -40,7 +40,7 @@ const Home = () => {
               <div className="hleft">
             
               </div>
-              <fiv className="hright">
+              <div className="hright">
                   <h2><em>🧠 How It Works</em></h2>
                 <ol>
                     <li>Upload an image (JPG or PNG)</li>
@@ -48,7 +48,7 @@ const Home = () => {
                     <li>AI algorithms process and return the transformed result</li>
                     <li>Preview the result and download it instantly</li>
                 </ol>
-              </fiv>
+              </div>
             </div>
 
             <div className="footer">

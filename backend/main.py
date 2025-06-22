@@ -1,12 +1,16 @@
 
 
+
+
+
+
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import numpy as np
 import cv2
 import base64
-from PIL import Image, ImageEnhance
-import io
+import time
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,59 +26,108 @@ app.add_middleware(
 class ImageData(BaseModel):
     image: str
 
-# 📸 Pillow Enhancement
-def enhance_image_with_opencv(b64_img_str):
-    img_bytes = base64.b64decode(b64_img_str)
-    nparr = np.frombuffer(img_bytes, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+# 1. Enhance image with brightness, contrast, sharpening
+#def enhance_image_with_opencv(b64_img_str):
+ #   img_bytes = base64.b64decode(b64_img_str)
+  #  nparr = np.frombuffer(img_bytes, np.uint8)
+   # img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # Brightness and contrast
-    enhanced = cv2.convertScaleAbs(img, alpha=1.5, beta=30)  # alpha: contrast, beta: brightness
+ #   enhanced = cv2.convertScaleAbs(img, alpha=1.5, beta=30)
+  #  kernel = np.array([[0, -1, 0],
+   #                    [-1, 5, -1],
+    #                   [0, -1, 0]])
+    #sharpened = cv2.filter2D(enhanced, -1, kernel)
 
-    # Sharpening kernel
-    kernel = np.array([[0, -1, 0],
-                       [-1, 5,-1],
-                       [0, -1, 0]])
-    sharpened = cv2.filter2D(enhanced, -1, kernel)
+    #return cv2.cvtColor(sharpened, cv2.COLOR_BGR2RGB)
 
-    return cv2.cvtColor(sharpened, cv2.COLOR_BGR2RGB)
-
-# 🖊️ Stronger Edge Mask
-def edge_mask(img, line_size=5, blur_value=7):
+# 2. Edge detection
+def edge_mask(img, line_size, blur_value):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     gray_blur = cv2.medianBlur(gray, blur_value)
-    edges = cv2.adaptiveThreshold(gray_blur, 255,
-                                  cv2.ADAPTIVE_THRESH_MEAN_C,
-                                  cv2.THRESH_BINARY,
-                                  line_size, blur_value)
-    return edges
+    edges = cv2.adaptiveThreshold(gray_blur, 255, 
+    cv2.ADAPTIVE_THRESH_MEAN_C, 
+    cv2.THRESH_BINARY, 
+    blockSize=line_size, 
+    C=blur_value)
+    smoothed_edges = cv2.GaussianBlur(edges, (5, 5), 0)
+    return smoothed_edges
 
-# 🎨 Reduced Color Quantization (flat colors)
-def color_quantization(img, k=7):
+# 3. Color quantization using k-means
+def color_quantization(img, k):
     data = np.float32(img).reshape((-1, 3))
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 0.001)
     _, label, center = cv2.kmeans(data, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
     center = np.uint8(center)
     result = center[label.flatten()]
-    return result.reshape(img.shape)
+    result = result.reshape(img.shape)
+    return result
 
-# 🧠 Full Cartoon Effect
+# 4. Final cartoonization
 def cartoonize(img):
     edges = edge_mask(img, line_size=5, blur_value=7)
-    quantized = color_quantization(img, k=9)
-    blurred = cv2.bilateralFilter(quantized, d=4, sigmaColor=200, sigmaSpace=200)
-    cartoon = cv2.bitwise_and(blurred, blurred, mask=edges)
+    img_quantized = color_quantization(img, k=9)
+    blurred = cv2.bilateralFilter(img_quantized, d=2, sigmaColor=100, sigmaSpace=100)
+    edges_colored = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB)
+    cartoon = cv2.bitwise_and(blurred, edges_colored)
     return cartoon
 
-# 🚀 API Route
+def upscale_image(img, scale_percent=300):  
+    height, width = img.shape[:2]
+    new_width = int(width * scale_percent / 100)
+    new_height = int(height * scale_percent / 100)
+    dim = (new_width, new_height)
+    upscaled_img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+    return upscaled_img
+
+def resize_image(img, max_dim=512):
+    height, width = img.shape[:2]
+    if max(height, width) > max_dim:
+        scale = max_dim / max(height, width)
+        new_size = (int(width * scale), int(height * scale))
+        return cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
+    return img
+
+# 5. API Endpoint
 @app.post("/cartoonize")
 def cartoonize_image(data: ImageData):
     try:
-        rgb_img = enhance_image_with_opencv(data.image)
+        start = time.time()
+
+        # Decode image
+        img_data = base64.b64decode(data.image)
+        np_img = np.frombuffer(img_data, np.uint8)
+        bgr_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+        if bgr_img is None:
+            raise HTTPException(status_code=400, detail="Invalid image")
+        rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
+
+        # Resize for faster processing
+        rgb_img = resize_image(rgb_img)
+
         cartoon_img = cartoonize(rgb_img)
-        bgr_cartoon = cv2.cvtColor(cartoon_img, cv2.COLOR_RGB2BGR)
-        _, buffer = cv2.imencode('.jpg', bgr_cartoon)
+
+        # Optional: reduce upscale scale
+        upscaled_img = upscale_image(cartoon_img, scale_percent=300)
+
+        bgr_cartoon = cv2.cvtColor(upscaled_img, cv2.COLOR_RGB2BGR)
+        _, buffer = cv2.imencode('.jpg', bgr_cartoon, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
         cartoon_base64 = base64.b64encode(buffer).decode('utf-8')
+
+        print(f"✅ Process completed in {time.time() - start:.2f}s")
         return {"cartoonImage": cartoon_base64}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+
+
+
+
+
+
+
+
+
+
+
+
+
