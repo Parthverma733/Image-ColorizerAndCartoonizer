@@ -25,20 +25,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-import os
-import requests
 
-def download_model():
-    url = "https://drive.google.com/uc?export=download&id=1fCFjdOY4LqQyoSVgu5p2tGrjm3lenRK4"  
-    model_path = "model_003200.h5"
-    if not os.path.exists(model_path):
-        print("Downloading model...")
-        response = requests.get(url)
-        with open(model_path, "wb") as f:
-            f.write(response.content)
-        print("Model downloaded.")
-
-download_model()
 
 model = load_model("model_003200.h5")
 

@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-pydantic
-numpy
-opencv-python-headless
-tensorflow
-requests
-python-multipart
