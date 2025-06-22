@@ -12,6 +12,9 @@ import cv2
 import base64
 import time
 from fastapi.middleware.cors import CORSMiddleware
+from tensorflow.keras.models import load_model
+import traceback
+
 
 app = FastAPI()
 
@@ -22,6 +25,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+model = load_model("model_003200.h5")
+
 
 class ImageData(BaseModel):
     image: str
@@ -87,6 +93,20 @@ def resize_image(img, max_dim=512):
         return cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
     return img
 
+
+def colorizer(img):
+    # Resize and normalize image
+    img_resized = cv2.resize(img, (256, 256))  
+    img_normalized = img_resized / 127.5 - 1  
+    img_input = np.expand_dims(img_normalized, axis=0)  
+
+    gen_image = model.predict(img_input)[0]  
+    gen_image = (gen_image + 1) * 127.5  
+    gen_image = np.clip(gen_image, 0, 255).astype(np.uint8)
+
+    return gen_image
+
+
 # 5. API Endpoint
 @app.post("/cartoonize")
 def cartoonize_image(data: ImageData):
@@ -121,7 +141,30 @@ def cartoonize_image(data: ImageData):
 
 
 
+@app.post("/colorizer")
+def cartoonize_image(data: ImageData):
+    try:
+        # Decode base64 image
+        img_data = base64.b64decode(data.image)
+        np_img = np.frombuffer(img_data, np.uint8)
+        bgr_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
 
+        if bgr_img is None:
+            raise HTTPException(status_code=400, detail="Invalid image")
+
+        rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
+        color_img = colorizer(rgb_img)
+
+        # Convert back to BGR for JPEG encoding
+        bgr_color = cv2.cvtColor(color_img, cv2.COLOR_RGB2BGR)
+        _, buffer = cv2.imencode('.jpg', bgr_color)
+        color_base64 = base64.b64encode(buffer).decode('utf-8')
+
+        return {"coloredImage": color_base64}
+
+    except Exception as e:
+        traceback.print_exc()  
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 

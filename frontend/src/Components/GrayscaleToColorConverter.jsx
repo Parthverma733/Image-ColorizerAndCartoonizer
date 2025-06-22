@@ -34,7 +34,7 @@ const GrayscaleToColorConverter = () => {
         try {
             const base64Data = originalImage.split(',')[1];
             const response = await axios.post(
-                'http://localhost:8000/colorize', // Backend endpoint
+                'http://localhost:8000/colorizer', // Backend endpoint
                 { image: base64Data },
                 {
                     headers: {
