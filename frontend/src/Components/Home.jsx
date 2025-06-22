@@ -21,7 +21,7 @@ const Home = () => {
 
             <div className="about-section">
              <div className="aleft">
-                   <h2>🚀 What is This?</h2>
+                   <h2><em>🚀 What is This?</em></h2>
                 <p>
                     This web-based tool uses a combination of <strong>OpenCV, Pillow, and AI models</strong> to let you:
                     <ul>
@@ -41,7 +41,7 @@ const Home = () => {
             
               </div>
               <fiv className="hright">
-                  <h2>🧠 How It Works</h2>
+                  <h2><em>🧠 How It Works</em></h2>
                 <ol>
                     <li>Upload an image (JPG or PNG)</li>
                     <li>Click convert — image is sent to the backend</li>
