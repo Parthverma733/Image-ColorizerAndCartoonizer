@@ -1,17 +1,17 @@
-# 🎨 Image Colorizer & Cartoonizer 
+# 🎨 Image Colorizer & Cartoonizer
 
-This is a  web application built with **FastAPI** and **React.js** that allows users to:
+This is a web application built with **FastAPI** and **React.js** that allows users to:
 
 - 🖼️ Convert grayscale images to colored versions using a trained deep learning model  
 - 🧑‍🎨 Transform regular images into cartoon-style images using OpenCV techniques
 
 ---
 
-
 ## 🔧 Setup Instructions
 
 ### 📥 1. Clone the Repository
 
+```bash
 git clone https://github.com/your-username/image-colorizer-cartoonizer.git
 cd image-colorizer-cartoonizer
 📦 2. Download the Pretrained Model
@@ -19,19 +19,25 @@ Download the trained model file from the link below and place it inside the back
 
 🔗 Download model_003200.h5
 
+markdown
+Copy
+Edit
 project-root/
 └── backend/
     └── model_003200.h5
-    
 🖥 3. Start the Backend (FastAPI)
-
+bash
+Copy
+Edit
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
 📌 Backend runs on: http://localhost:8000
 
 🌐 4. Start the Frontend (React)
-
+bash
+Copy
+Edit
 cd frontend
 npm install
 npm start
@@ -66,4 +72,3 @@ Real-time cartoonization using OpenCV
 Deep learning-powered grayscale to color conversion
 
 Loading animations and error handling
-
