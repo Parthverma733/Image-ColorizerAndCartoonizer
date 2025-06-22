@@ -1,0 +1,81 @@
+.navbar {
+    background-color: rgba(0, 0, 0, 0.338);
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 2rem;
+max-width: 100vw;
+
+}
+
+.navbar-brand {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+
+}
+
+.logo {
+    background: url('..\assets\logo.gif');
+    background-color: black;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    scale: 1.5;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+     transition: all 0.4s ease;
+     
+     
+
+}
+
+.logo:hover{
+    scale:1.2;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #394acf;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin-left: 50px;
+}
+.navbar-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+/* Underline using pseudo-element for animation */
+.navbar-links a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #394acf;
+    transition: width 0.4s ease;
+}
+
+/* Hover Effect */
+.navbar-links a:hover {
+    color: #394acf;
+    filter: brightness(1.4);
+}
+
+/* Underline expands on hover */
+.navbar-links a:hover::after {
+    width: 100%;
+}
