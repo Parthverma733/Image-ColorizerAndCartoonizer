@@ -11,7 +11,6 @@ This is a web application built with **FastAPI** and **React.js** that allows us
 
 ### 📥 1. Clone the Repository
 
-```bash
 git clone https://github.com/your-username/image-colorizer-cartoonizer.git
 cd image-colorizer-cartoonizer
 ---
