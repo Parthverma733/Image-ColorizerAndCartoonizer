@@ -2,7 +2,9 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import './image.css'
 
+
 import { motion } from 'framer-motion';
+import Loading from './Loading';
 
 const ImageToCartoonConverter = () => {
     const [originalImage, setOriginalImage] = useState(null);
@@ -120,7 +122,9 @@ const ImageToCartoonConverter = () => {
                                     />
                                 ) : (
                                     <div className="output-placeholder">
-                                        <p>Cartoon version will appear here</p>
+                                       {isLoading?
+                                       (<Loading/>) :
+                                        (<p>Cartoon version will appear here</p>)}
                                     </div>
                                 )}
                             </div>
