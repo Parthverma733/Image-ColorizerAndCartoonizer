@@ -35,7 +35,8 @@ uvicorn main:app --reload
 
 cd frontend
 npm install
-npm start
+npm run dev
+
 📌 Frontend runs at: http://localhost:3000
 
 📷 Sample Test Images
